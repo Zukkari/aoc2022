@@ -44,3 +44,23 @@ let solve_p1 file =
   let sacks = read_lines ~file ~transformer:to_rucksacks in
   List.map ~f:(fun s -> intersect_rucksacks s |> rucksack_priority) sacks
   |> List.fold ~init:0 ~f:( + )
+
+let intersection group =
+  match group with
+  | [ t1; t2; t3 ] ->
+      let t1_and_t2 = Set.inter t1 t2 in
+      let total = Set.inter t1_and_t2 t3 in
+      let group_priorities =
+        Set.filter_map (module Int) ~f:(fun c -> Map.find priorities c) total
+      in
+      Set.fold ~init:0 ~f:( + ) group_priorities
+  | _ -> "Invalid group" |> failwith
+
+let solve_p2 file =
+  read_lines ~file ~transformer:(fun x -> x)
+  |> List.groupi ~break:(fun i _ _ -> i % 3 = 0)
+  |> List.map ~f:(fun group ->
+         List.map
+           ~f:(fun sack -> Set.of_list (module Char) (String.to_list sack))
+           group)
+  |> List.map ~f:intersection |> List.fold ~init:0 ~f:( + )
