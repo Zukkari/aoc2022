@@ -1,6 +1,5 @@
 open Base
 open Stdio
-open List
 
 let char_range a b =
   let lower = Char.to_int a in
